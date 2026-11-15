@@ -10,16 +10,16 @@ import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 25;
 
-function membershipRowCSV(member: UserOverview): string {
+function membershipRowCSV(member: UserOverview, year: number): string {
   const parts = member.name.trim().split(" ");
   const lastName = parts.pop();
   const firstName = parts.join(" ");
-  return [firstName, lastName, member.dob, member.address?.address, member.address?.postCode, member.email, member.createdAt].join(";");
+  return [firstName, lastName, member.dob, member.address?.address, member.address?.postCode, member.email, member.membershipPaymentDates[year]].join(";");
 }
 
-function exportMembershipCSV(members: UserOverview[]) {
+function exportMembershipCSV(members: UserOverview[], year: number) {
   const header = "Fornavn;Etternavn;Fødselsdato;Adresse;Postnummer;E-post;Betalingsdato\n"
-  const content = header + members.map(membershipRowCSV).join("\n");
+  const content = header + members.map(member => membershipRowCSV(member, year)).join("\n");
   const blob = new Blob([content], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
 
@@ -102,7 +102,10 @@ export default function UserList({
               alert("Ingen år er valgt");
               return;
             }
-            exportMembershipCSV(usersInYear.filter(user => user.address !== null && parseInt(user.dob.substring(0, 4)) >= selectedYear - 26))
+            exportMembershipCSV(
+              usersInYear.filter(user => user.address !== null && parseInt(user.dob.substring(0, 4)) >= selectedYear - 26),
+              selectedYear
+            );
           }}
           disabled={selectedYear === null}
           variant="secondary"
