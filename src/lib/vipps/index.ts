@@ -1,8 +1,6 @@
 export { handleWebhook } from "@/lib/vipps/webhook";
 export {
   getAgreementStatus,
-  getAllOrders,
-  getAllAgreements,
   getAgreements,
   getOrders,
   getOrderStatus,

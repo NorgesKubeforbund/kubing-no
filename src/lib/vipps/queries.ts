@@ -78,7 +78,7 @@ export async function getOrderNumber(client: PoolClient): Promise<number> {
   return res.rows[0].nextval as number;
 }
 
-export async function getAllOrders(): Promise<Payment[]> {
+export async function getOrders(userId?: number): Promise<Payment[]> {
   return (await query(`
     SELECT
       'order' AS "kind",
@@ -95,6 +95,7 @@ export async function getAllOrders(): Promise<Payment[]> {
       u.email
     FROM orders o
     JOIN users u ON u.id = o.user_id
+    WHERE $1::int IS NULL OR u.id = $1
 
     UNION ALL
 
@@ -114,12 +115,13 @@ export async function getAllOrders(): Promise<Payment[]> {
     FROM charges c
     JOIN agreements a ON a.id = c.agreement_id
     JOIN users u ON u.id = a.user_id
+    WHERE $1::int IS NULL OR u.id = $1
 
     ORDER BY "createdAt" DESC
-  `, [])).rows;
+  `, [userId ?? null])).rows;
 }
 
-export async function getAllAgreements(): Promise<AgreementWithUser[]> {
+export async function getAgreements(userId?: number): Promise<AgreementWithUser[]> {
   return (await query(`
     SELECT
       a.id,
@@ -131,67 +133,9 @@ export async function getAllAgreements(): Promise<AgreementWithUser[]> {
       u.email
     FROM agreements a
     JOIN users u ON u.id = a.user_id
+    WHERE $1::int IS NULL OR u.id = $1
     ORDER BY "createdAt" DESC
-  `, [])).rows;
-}
-export async function getOrders(userId: number): Promise<Payment[]> {
-  return (await query(`
-    SELECT
-      'order' AS "kind",
-      o.id,
-      o.year,
-      o.vipps_reference AS "vippsReference",
-      o.status,
-      o.created_at AS "createdAt",
-      NULL AS "type",
-      NULL AS "paymentDue",
-      NULL AS "agreementId",
-      u.id AS "userId",
-      u.name AS "userName",
-      u.email
-    FROM orders o
-    JOIN users u ON u.id = o.user_id
-    WHERE u.id = $1
-
-    UNION ALL
-
-    SELECT
-      'charge' AS "kind",
-      c.id,
-      c.year,
-      c.vipps_reference AS "vippsReference",
-      c.status,
-      c.created_at AS "createdAt",
-      c.type AS "type",
-      c.payment_due AS "paymentDue",
-      c.agreement_id AS "agreementId",
-      u.id AS "userId",
-      u.name AS "userName",
-      u.email
-    FROM charges c
-    JOIN agreements a ON a.id = c.agreement_id
-    JOIN users u ON u.id = a.user_id
-    WHERE u.id = $1
-
-    ORDER BY "createdAt" DESC
-  `, [userId])).rows;
-}
-
-export async function getAgreements(userId: number): Promise<AgreementWithUser[]> {
-  return (await query(`
-    SELECT
-      a.id,
-      a.vipps_reference AS "vippsReference",
-      a.status,
-      a.created_at AS "createdAt",
-      u.id AS "userId",
-      u.name AS "userName",
-      u.email
-    FROM agreements a
-    JOIN users u ON u.id = a.user_id
-    WHERE u.id = $1
-    ORDER BY "createdAt" DESC
-  `, [userId])).rows;
+  `, [userId ?? null])).rows;
 }
 
 export async function getOpenOrders(): Promise<{ id: number, userId: number, vippsReference: string, year: number }[]> {
