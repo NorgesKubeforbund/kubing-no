@@ -1,5 +1,6 @@
 import { query } from "@/db";
-import { Maybe, User, UserData } from "@/types";
+import { Maybe, User, UserData, UserOverview } from "@/types";
+import { getCurrentYear, toNorwayDateString } from "@/lib/time";
 import { getYearsAsMember, isUserMember } from "@/lib/membership";
 import { hasUserActiveAgreement } from "@/lib/agreement";
 
@@ -55,4 +56,50 @@ export async function getUser(userId: number): Promise<Maybe<User>> {
       } : null,
     }
   };
+}
+
+export async function getUsers(): Promise<UserOverview[]> {
+  const usersRes = await query(`
+    SELECT
+      u.id,
+      u.name,
+      u.wca_id AS "wcaId",
+      u.email,
+      u.dob,
+      u.address,
+      u.post_code AS "postCode",
+      u.post_area AS "postArea",
+      u.created_at AS "createdAt",
+      EXISTS (
+        SELECT 1 FROM memberships m
+        WHERE m.user_id = u.id AND m.year = $1
+      ) AS "isMember",
+      EXISTS (
+        SELECT 1 FROM agreements a
+        WHERE a.user_id = u.id AND a.status = 'ACTIVE'
+      ) AS "hasActiveAgreement",
+      COALESCE((
+        SELECT ARRAY_AGG(m.year ORDER BY m.year)
+        FROM memberships m
+        WHERE m.user_id = u.id
+      ), '{}') AS "yearsAsMember"
+    FROM users u
+    ORDER BY u.name
+  `, [getCurrentYear()]);
+  return usersRes.rows.map(row => ({
+    userId: row.id,
+    name: row.name,
+    wcaId: row.wcaId,
+    email: row.email,
+    dob: row.dob,
+    address: row.address ? {
+      address: row.address,
+      postCode: row.postCode,
+      postArea: row.postArea,
+    } : null,
+    createdAt: toNorwayDateString(row.createdAt),
+    isMember: row.isMember,
+    hasActiveAgreement: row.hasActiveAgreement,
+    yearsAsMember: row.yearsAsMember,
+  }));
 }

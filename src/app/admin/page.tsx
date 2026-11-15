@@ -29,8 +29,8 @@ function PermissionLink({
   permission: UserPermission;
 }) {
   switch (permission) {
-    case "membership_list":
-      return <BlueLink href="/admin/medlemmer">Medlemsliste</BlueLink>
+    case "user_overview":
+      return <BlueLink href="/admin/brukere">Brukeroversikt</BlueLink>
     case "members_comp":
       return <BlueLink href="/admin/medlemmer-konkurranse">Medlemmer på konkurranse</BlueLink>;
     case "order_overview":
