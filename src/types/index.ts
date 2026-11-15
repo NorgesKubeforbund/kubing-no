@@ -17,14 +17,10 @@ export type UserData = User & {
   yearsAsMember: number[];
 };
 
-export type UserOverview = UserData & {
+export type UserOverview = Omit<UserData, "userId"> & {
+  userId: number | null; // TODO: Change to number when manual_payments is removed
   createdAt: string;
   membershipPaymentDates: Record<number, string>;
-};
-
-export type Member = User & {
-  id: number | null; // TODO: Change to number when manual_payments is removed
-  createdAt: string;
 };
 
 export type UserLock = {

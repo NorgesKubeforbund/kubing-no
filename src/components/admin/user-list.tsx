@@ -47,7 +47,7 @@ export default function UserList({
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
-  const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -68,13 +68,13 @@ export default function UserList({
     return filteredUsers.slice(start, start + PAGE_SIZE);
   }, [filteredUsers, page]);
 
-  function toggleExpanded(id: number) {
-    setExpandedIds(prev => {
+  function toggleExpanded(rowKey: string) {
+    setExpandedRows(prev => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
+      if (next.has(rowKey)) {
+        next.delete(rowKey);
       } else {
-        next.add(id);
+        next.add(rowKey);
       }
       return next;
     });
@@ -158,11 +158,12 @@ export default function UserList({
           </thead>
           <tbody>
             {paginatedUsers.map((user, index) => {
-              const isExpanded = expandedIds.has(user.userId);
+              const rowKey = user.userId !== null ? `user-${user.userId}` : `wca-${user.wcaId}`;
+              const isExpanded = expandedRows.has(rowKey);
               return (
-                <Fragment key={user.userId ?? user.wcaId}>
+                <Fragment key={rowKey}>
                   <tr
-                    onClick={() => toggleExpanded(user.userId)}
+                    onClick={() => toggleExpanded(rowKey)}
                     className={`cursor-pointer hover:bg-table-hover ${index % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}
                   >
                     <td><ChevronDownIcon className={cn(`transition-transform duration-200`, isExpanded && "-rotate-180")} /> </td>
@@ -199,16 +200,18 @@ export default function UserList({
                               <td>Opprettet</td>
                               <td>{new Date(user.createdAt).toLocaleDateString("nb-NO", { dateStyle: "long", timeZone: "UTC" })}</td>
                             </tr>
-                            <tr className="border-t border-neutral-300">
-                              <td colSpan={2} className="py-2">
-                                <Link
-                                  href={`/admin/brukere/${user.userId}`}
-                                  className={buttonClassName("secondary", "sm")}
-                                >
-                                  Vis mer
-                                </Link>
-                              </td>
-                            </tr>
+                            {user.userId !== null &&
+                              <tr className="border-t border-neutral-300">
+                                <td colSpan={2} className="py-2">
+                                  <Link
+                                    href={`/admin/brukere/${user.userId}`}
+                                    className={buttonClassName("secondary", "sm")}
+                                  >
+                                    Vis mer
+                                  </Link>
+                                </td>
+                              </tr>
+                            }
                           </tbody>
                         </table>
                       </td>

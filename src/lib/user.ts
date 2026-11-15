@@ -59,6 +59,7 @@ export async function getUser(userId: number): Promise<Maybe<User>> {
 }
 
 export async function getUsers(): Promise<UserOverview[]> {
+  const manualPaymentYear = 2026;
   const usersRes = await query(`
     SELECT
       u.id,
@@ -89,8 +90,27 @@ export async function getUsers(): Promise<UserOverview[]> {
         WHERE m.user_id = u.id
       ), '{}') AS "membershipPaymentDates"
     FROM users u
-    ORDER BY u.name
-  `, [getCurrentYear()]);
+
+    UNION ALL
+
+    SELECT
+      NULL AS id,
+      mp.name,
+      mp.wca_id AS "wcaId",
+      mp.email,
+      mp.dob,
+      mp.address,
+      mp.post_code AS "postCode",
+      mp.post_area AS "postArea",
+      mp.created_at AS "createdAt",
+      $2::int = $1 AS "isMember",
+      FALSE AS "hasActiveAgreement",
+      ARRAY[$2::int] AS "yearsAsMember",
+      JSON_BUILD_OBJECT($2::int, TO_CHAR(mp.created_at AT TIME ZONE 'Europe/Oslo', 'YYYY-MM-DD')) AS "membershipPaymentDates"
+    FROM manual_payments mp
+
+    ORDER BY name
+  `, [getCurrentYear(), manualPaymentYear]);
   return usersRes.rows.map(row => ({
     userId: row.id,
     name: row.name,
