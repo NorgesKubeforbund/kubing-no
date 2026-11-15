@@ -2,7 +2,7 @@ import OrderOverview from "@/components/admin/order-overview";
 import BackArrow from "@/components/ui/back-arrow";
 import Title from "@/components/ui/title";
 import { getAuth } from "@/lib/auth";
-import { getAllOrders } from "@/lib/vipps";
+import { getOrders } from "@/lib/vipps";
 import { redirect } from "next/navigation";
 
 export default async function OrderOverviewPage() {
@@ -10,7 +10,7 @@ export default async function OrderOverviewPage() {
   if (!permissions || !permissions.includes("order_overview")) {
     redirect("/admin");
   }
-  const orders = await getAllOrders();
+  const orders = await getOrders();
 
   return (
     <div className="flex flex-col px-4 sm:px-8 gap-8 text-center w-full max-w-5xl">

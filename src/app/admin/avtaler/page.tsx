@@ -2,7 +2,7 @@ import AgreementOverview from "@/components/admin/agreement-overview";
 import BackArrow from "@/components/ui/back-arrow";
 import Title from "@/components/ui/title";
 import { getAuth } from "@/lib/auth";
-import { getAllAgreements } from "@/lib/vipps";
+import { getAgreements } from "@/lib/vipps";
 import { redirect } from "next/navigation";
 
 export default async function OrderOverviewPage() {
@@ -10,7 +10,7 @@ export default async function OrderOverviewPage() {
   if (!permissions || !permissions.includes("agreement_overview")) {
     redirect("/admin");
   }
-  const agreements = await getAllAgreements();
+  const agreements = await getAgreements();
 
   return (
     <div className="flex flex-col px-4 sm:px-8 gap-8 text-center w-full max-w-5xl">
