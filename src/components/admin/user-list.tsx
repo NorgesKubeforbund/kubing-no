@@ -164,7 +164,7 @@ export default function UserList({
                 <Fragment key={rowKey}>
                   <tr
                     onClick={() => toggleExpanded(rowKey)}
-                    className={`cursor-pointer hover:bg-table-hover ${index % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}
+                    className={`clickable-row cursor-pointer hover:bg-table-hover ${index % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}
                   >
                     <td><ChevronDownIcon className={cn(`transition-transform duration-200`, isExpanded && "-rotate-180")} /> </td>
                     <td>{user.name}</td>

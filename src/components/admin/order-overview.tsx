@@ -93,7 +93,7 @@ export default function OrderOverview({ orders }: { orders: Payment[] }) {
                 <Fragment key={order.id}>
                   <tr
                     onClick={() => toggleExpanded(order.id)}
-                    className={`cursor-pointer hover:bg-neutral-400 ${index % 2 === 0 ? "bg-neutral-300" : "bg-neutral-200"}`}
+                    className={`clickable-row cursor-pointer hover:bg-neutral-400 ${index % 2 === 0 ? "bg-neutral-300" : "bg-neutral-200"}`}
                   >
                     <td><ChevronDownIcon className={cn(`transition-transform duration-200`, isExpanded && "-rotate-180")} /> </td>
                     <td>{order.id}</td>
