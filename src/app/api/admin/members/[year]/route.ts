@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: Promise<{ year: string }> }
 ) {
   const { permissions } = await getAuth();
-  if (!permissions || !permissions.includes("membership_list")) {
+  if (!permissions || !permissions.includes("user_overview")) {
     return NextResponse.json({ error: "Ikke tilstrekkelige rettigheter." }, { status: 403 });
   }
   const { year: inputYear } = await params;
