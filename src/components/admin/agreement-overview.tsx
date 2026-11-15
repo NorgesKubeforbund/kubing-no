@@ -64,6 +64,9 @@ export default function AgreementOverview({ agreements }: { agreements: Agreemen
           Avsluttet
         </option>
       </Select>
+      <div>
+        Antall treff: {filteredAgreements.length}
+      </div>
       <div className="overflow-x-auto self-center-safe max-w-full sm:text-xl text-sm">
         <table>
           <thead>
