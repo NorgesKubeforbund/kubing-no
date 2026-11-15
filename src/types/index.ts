@@ -19,6 +19,7 @@ export type UserData = User & {
 
 export type UserOverview = UserData & {
   createdAt: string;
+  membershipPaymentDates: Record<number, string>;
 };
 
 export type Member = User & {

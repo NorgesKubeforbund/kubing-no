@@ -82,7 +82,12 @@ export async function getUsers(): Promise<UserOverview[]> {
         SELECT ARRAY_AGG(m.year ORDER BY m.year)
         FROM memberships m
         WHERE m.user_id = u.id
-      ), '{}') AS "yearsAsMember"
+      ), '{}') AS "yearsAsMember",
+      COALESCE((
+        SELECT JSON_OBJECT_AGG(m.year, TO_CHAR(m.created_at AT TIME ZONE 'Europe/Oslo', 'YYYY-MM-DD'))
+        FROM memberships m
+        WHERE m.user_id = u.id
+      ), '{}') AS "membershipPaymentDates"
     FROM users u
     ORDER BY u.name
   `, [getCurrentYear()]);
@@ -101,5 +106,6 @@ export async function getUsers(): Promise<UserOverview[]> {
     isMember: row.isMember,
     hasActiveAgreement: row.hasActiveAgreement,
     yearsAsMember: row.yearsAsMember,
+    membershipPaymentDates: row.membershipPaymentDates,
   }));
 }
