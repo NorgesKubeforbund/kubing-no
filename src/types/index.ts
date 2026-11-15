@@ -14,12 +14,13 @@ export type UserData = User & {
   isMember: boolean;
   hasActiveAgreement: boolean;
   userId: number;
-  yearsAsMember: number[]
+  yearsAsMember: number[];
 };
 
-export type Member = User & {
-  id: number | null; // TODO: Change to number when manual_payments is removed
+export type UserOverview = Omit<UserData, "userId"> & {
+  userId: number | null; // TODO: Change to number when manual_payments is removed
   createdAt: string;
+  membershipPaymentDates: Record<number, string>;
 };
 
 export type UserLock = {
@@ -87,7 +88,7 @@ export type Order = PaymentBase & {
 export type Charge = PaymentBase & {
   kind: "charge";
   type: "INITIAL" | "RECURRING";
-  paymentDue: Date | null;
+  paymentDue: string | null;
   agreementId: number;
 };
 
@@ -170,7 +171,7 @@ export type Maybe<T> = { success: true, data: T } | { success: false };
 export type MaybeWithStatusCode<T> = { success: true, data: T } | { success: false, status?: number };
 
 export type UserPermission =
-  | "membership_list"
+  | "user_overview"
   | "members_comp"
   | "order_overview"
   | "agreement_overview";

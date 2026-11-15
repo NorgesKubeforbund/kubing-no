@@ -64,6 +64,9 @@ export default function AgreementOverview({ agreements }: { agreements: Agreemen
           Avsluttet
         </option>
       </Select>
+      <div>
+        Antall treff: {filteredAgreements.length}
+      </div>
       <div className="overflow-x-auto self-center-safe max-w-full sm:text-xl text-sm">
         <table>
           <thead>
@@ -81,7 +84,7 @@ export default function AgreementOverview({ agreements }: { agreements: Agreemen
                 <Fragment key={agreement.id}>
                   <tr
                     onClick={() => toggleExpanded(agreement.id)}
-                    className={`cursor-pointer hover:bg-neutral-400 ${index % 2 === 0 ? "bg-neutral-300" : "bg-neutral-200"}`}
+                    className={`clickable-row cursor-pointer hover:bg-neutral-400 ${index % 2 === 0 ? "bg-neutral-300" : "bg-neutral-200"}`}
                   >
                     <td><ChevronDownIcon className={cn(`transition-transform duration-200`, isExpanded && "-rotate-180")} /> </td>
                     <td>{agreement.id}</td>
