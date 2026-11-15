@@ -1,10 +1,12 @@
 "use client";
 
 import { UserOverview } from "@/types";
-import { useState, useMemo, useRef } from "react";
-import { DownloadIcon, SearchIcon, XIcon } from "lucide-react";
-import Button from "@/components/ui/button";
+import { useState, useMemo, useRef, Fragment } from "react";
+import { ChevronDownIcon, DownloadIcon, SearchIcon, XIcon } from "lucide-react";
+import Link from "next/link";
+import Button, { buttonClassName } from "@/components/ui/button";
 import Select from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 25;
 
@@ -45,6 +47,7 @@ export default function UserList({
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
+  const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -64,6 +67,18 @@ export default function UserList({
     const start = (page - 1) * PAGE_SIZE;
     return filteredUsers.slice(start, start + PAGE_SIZE);
   }, [filteredUsers, page]);
+
+  function toggleExpanded(id: number) {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -132,22 +147,73 @@ export default function UserList({
         <table>
           <thead>
             <tr>
+              <th></th>
               <th>Navn</th>
               <th>NKF ID</th>
               <th>WCA ID</th>
             </tr>
           </thead>
           <tbody>
-            {paginatedUsers.map((user, index) =>
-              <tr
-                key={user.userId ?? user.wcaId}
-                className={`hover:bg-table-hover ${index % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}
-              >
-                <td>{user.name}</td>
-                <td>{user.userId ?? "Ingen NKF ID"}</td>
-                <td>{user.wcaId ?? "Ingen WCA ID"}</td>
-              </tr>
-            )}
+            {paginatedUsers.map((user, index) => {
+              const isExpanded = expandedIds.has(user.userId);
+              return (
+                <Fragment key={user.userId ?? user.wcaId}>
+                  <tr
+                    onClick={() => toggleExpanded(user.userId)}
+                    className={`cursor-pointer hover:bg-table-hover ${index % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}
+                  >
+                    <td><ChevronDownIcon className={cn(`transition-transform duration-200`, isExpanded && "-rotate-180")} /> </td>
+                    <td>{user.name}</td>
+                    <td>{user.userId ?? "Ingen NKF ID"}</td>
+                    <td>{user.wcaId ?? "Ingen WCA ID"}</td>
+                  </tr>
+                  {isExpanded && (
+                    <tr className="bg-neutral-100">
+                      <td colSpan={4} className="p-0">
+                        <table className="w-full text-left text-sm">
+                          <tbody>
+                            <tr>
+                              <td>Er medlem</td>
+                              <td>{user.isMember ? "Ja" : "Nei"}</td>
+                            </tr>
+                            <tr className="border-t border-neutral-300">
+                              <td>Har automatisk fornyelse</td>
+                              <td>{user.hasActiveAgreement ? "Ja" : "Nei"}</td>
+                            </tr>
+                            <tr className="border-t border-neutral-300">
+                              <td>E-post</td>
+                              <td>{user.email}</td>
+                            </tr>
+                            <tr className="border-t border-neutral-300">
+                              <td>År som medlem</td>
+                              <td>{user.yearsAsMember.length > 0 ? (user.yearsAsMember.join(", ")) : "Ingen"}</td>
+                            </tr>
+                            <tr className="border-t border-neutral-300">
+                              <td>Postnummer</td>
+                              <td>{user.address?.postCode ?? "Ingen"}</td>
+                            </tr>
+                            <tr className="border-t border-neutral-300">
+                              <td>Opprettet</td>
+                              <td>{new Date(user.createdAt).toLocaleDateString("nb-NO", { dateStyle: "long", timeZone: "UTC" })}</td>
+                            </tr>
+                            <tr className="border-t border-neutral-300">
+                              <td colSpan={2} className="py-2">
+                                <Link
+                                  href={`/admin/brukere/${user.userId}`}
+                                  className={buttonClassName("secondary", "sm")}
+                                >
+                                  Vis mer
+                                </Link>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              );
+            })}
           </tbody>
         </table>
       </div>

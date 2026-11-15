@@ -6,7 +6,7 @@ import { getAllYearsWithMembers } from "@/lib/membership";
 import { getUsers } from "@/lib/user";
 import { redirect } from "next/navigation";
 
-export default async function MembersPage() {
+export default async function UsersPage() {
   const { permissions } = await getAuth();
   if (!permissions || !permissions.includes("user_overview")) {
     redirect("/admin");
