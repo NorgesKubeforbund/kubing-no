@@ -108,10 +108,9 @@ export async function getUsers(): Promise<UserOverview[]> {
       ARRAY[$2::int] AS "yearsAsMember",
       JSON_BUILD_OBJECT($2::int, TO_CHAR(mp.created_at AT TIME ZONE 'Europe/Oslo', 'YYYY-MM-DD')) AS "membershipPaymentDates"
     FROM manual_payments mp
-
-    ORDER BY name
   `, [getCurrentYear(), manualPaymentYear]);
-  return usersRes.rows.map(row => ({
+  const collator = new Intl.Collator("nb", { sensitivity: "base" });
+  return usersRes.rows.sort((a, b) => collator.compare(a.name, b.name)).map(row => ({
     userId: row.id,
     name: row.name,
     wcaId: row.wcaId,
