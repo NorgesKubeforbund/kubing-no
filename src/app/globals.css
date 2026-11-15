@@ -38,8 +38,13 @@ td, th {
   padding: 4px 8px;
 }
 
+tr.clickable-row > td {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
 @media screen and (min-width: 640px) {
-  td, th {
+  td, th, tr.clickable-row > td {
     padding: 8px 16px;
   }
 }
