@@ -103,7 +103,7 @@ export default function OrderOverview({ orders }: { orders: Payment[] }) {
                         <table className="w-full text-left text-sm">
                           <tbody>
                             <tr>
-                              <td>NKF ID</td>
+                              <td>NKF-ID</td>
                               <td>{order.userId}</td>
                             </tr>
                             <tr className="border-t border-neutral-300">

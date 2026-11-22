@@ -15,6 +15,8 @@ export type UserData = User & {
   hasActiveAgreement: boolean;
   userId: number;
   yearsAsMember: number[]
+  wcaEmail: string;
+  contactEmail: string | null;
 };
 
 export type Member = User & {

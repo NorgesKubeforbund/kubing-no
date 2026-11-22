@@ -8,9 +8,10 @@ function Muted({ children }: { children: ReactNode }) {
 async function UserDataTable({ userData }: { userData: UserData }) {
   const rows: { label: string; value: ReactNode }[] = [
     { label: "Navn", value: userData.name },
-    { label: "WCA ID", value: userData.wcaId ?? <Muted>Ingen WCA ID</Muted> },
-    { label: "NKF ID", value: userData.userId },
-    { label: "E-post", value: userData.email },
+    { label: "WCA-ID", value: userData.wcaId ?? <Muted>Ingen WCA-ID</Muted> },
+    { label: "NKF-ID", value: userData.userId },
+    { label: "WCA-e-post", value: userData.wcaEmail },
+    { label: "Foretrukket e-post", value: userData.contactEmail ?? <Muted>WCA-e-post</Muted> },
     {
       label: "Fødselsdato",
       value: new Date(userData.dob).toLocaleDateString("nb-NO", {

@@ -216,7 +216,7 @@ export async function updateUserInfo(userId: number, user: WCAProfileResponse): 
     UPDATE users
     SET
       name = $1,
-      email = $2,
+      wca_email = $2,
       dob = $3
     WHERE 
       id = $4
@@ -502,7 +502,7 @@ async function addUser(user: WCAProfileResponse, address: Address | null): Promi
     name,
     wca_user_id,
     wca_id,
-    email,
+    wca_email,
     dob,
     address,
     post_code,

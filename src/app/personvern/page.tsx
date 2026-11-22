@@ -33,7 +33,7 @@ export default function PrivacyPolicy() {
             Adresse
           </div>
           <div>
-            WCA ID
+            WCA-ID
           </div>
         </div>
       </div>

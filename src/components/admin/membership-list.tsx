@@ -151,8 +151,8 @@ export default function MembershipList({
               <thead>
                 <tr>
                   <th>Navn</th>
-                  <th>NKF ID</th>
-                  <th>WCA ID</th>
+                  <th>NKF-ID</th>
+                  <th>WCA-ID</th>
                 </tr>
               </thead>
               <tbody>
@@ -162,8 +162,8 @@ export default function MembershipList({
                     className={`hover:bg-table-hover ${index % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}
                   >
                     <td>{member.name}</td>
-                    <td>{member.id ?? "Ingen NKF ID"}</td>
-                    <td>{member.wcaId ?? "Ingen WCA ID"}</td>
+                    <td>{member.id ?? "Ingen NKF-ID"}</td>
+                    <td>{member.wcaId ?? "Ingen WCA-ID"}</td>
                   </tr>
                 )}
               </tbody>

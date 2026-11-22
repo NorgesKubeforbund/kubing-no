@@ -59,7 +59,7 @@ export async function getAllMembers(year: number): Promise<Member[]> {
       u.id,
       u.name,
       u.wca_id AS "wcaId",
-      u.email,
+      COALESCE(u.contact_email, u.wca_email) AS email,
       u.dob,
       u.address,
       u.post_code AS "postCode",

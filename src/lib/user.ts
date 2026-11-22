@@ -24,12 +24,14 @@ export async function getUserData(userId: number): Promise<Maybe<UserData>> {
   };
 }
 
-export async function getUser(userId: number): Promise<Maybe<User>> {
+export async function getUser(userId: number): Promise<Maybe<User & { wcaEmail: string, contactEmail: string | null }>> {
   const res = await query(`
     SELECT 
       name,
       wca_id AS "wcaId",
-      email,
+      COALESCE(contact_email, wca_email) AS email,
+      wca_email AS "wcaEmail",
+      contact_email AS "contactEmail",
       dob,
       address,
       post_code AS "postCode",
@@ -47,6 +49,8 @@ export async function getUser(userId: number): Promise<Maybe<User>> {
       name: row.name,
       wcaId: row.wcaId,
       email: row.email,
+      wcaEmail: row.wcaEmail,
+      contactEmail: row.contactEmail,
       dob: row.dob,
       address: row.address ? {
         address: row.address,

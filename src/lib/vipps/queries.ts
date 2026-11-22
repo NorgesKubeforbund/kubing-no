@@ -19,7 +19,7 @@ export async function getUserLock(userId: number, client: PoolClient): Promise<U
     SELECT
       id AS "userId",
       name,
-      email
+      COALESCE(contact_email, wca_email) AS email
     FROM users
     WHERE id = $1
     FOR UPDATE
@@ -32,7 +32,7 @@ export async function getUserLockByAgreement(vippsReference: string, client: Poo
     SELECT
       u.id AS "userId",
       u.name,
-      u.email
+      COALESCE(u.contact_email, u.wca_email) AS email
     FROM users u
     JOIN agreements a ON u.id = a.user_id
     WHERE a.vipps_reference = $1
@@ -45,7 +45,7 @@ export async function getUserLockByCharge(vippsReference: string, client: PoolCl
     SELECT
       u.id AS "userId",
       u.name,
-      u.email,
+      COALESCE(u.contact_email, u.wca_email) AS email,
       c.year,
       c.id AS "chargeId",
       a.id AS "agreementId"
@@ -62,7 +62,7 @@ export async function getUserLockByEpayment(vippsReference: string, client: Pool
     SELECT
       u.id AS "userId",
       u.name,
-      u.email,
+      COALESCE(u.contact_email, u.wca_email) AS email,
       o.id AS "orderId",
       vipps_reference AS "vippsReference",
       year
@@ -92,7 +92,7 @@ export async function getAllOrders(): Promise<Payment[]> {
       NULL AS "agreementId",
       u.id AS "userId",
       u.name AS "userName",
-      u.email
+      COALESCE(u.contact_email, u.wca_email) AS email
     FROM orders o
     JOIN users u ON u.id = o.user_id
 
@@ -110,7 +110,7 @@ export async function getAllOrders(): Promise<Payment[]> {
       c.agreement_id AS "agreementId",
       u.id AS "userId",
       u.name AS "userName",
-      u.email
+      COALESCE(u.contact_email, u.wca_email) AS email
     FROM charges c
     JOIN agreements a ON a.id = c.agreement_id
     JOIN users u ON u.id = a.user_id
@@ -128,7 +128,7 @@ export async function getAllAgreements(): Promise<AgreementWithUser[]> {
       a.created_at AS "createdAt",
       u.id AS "userId",
       u.name AS "userName",
-      u.email
+      COALESCE(u.contact_email, u.wca_email) AS email
     FROM agreements a
     JOIN users u ON u.id = a.user_id
     ORDER BY "createdAt" DESC

@@ -94,7 +94,7 @@ export default function AgreementOverview({ agreements }: { agreements: Agreemen
                         <table className="w-full text-left text-sm">
                           <tbody>
                             <tr>
-                              <td>NKF ID</td>
+                              <td>NKF-ID</td>
                               <td>{agreement.userId}</td>
                             </tr>
                             <tr className="border-t border-neutral-300">
